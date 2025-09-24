@@ -81,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen>
 
               // Tagline tambahan
               const Text(
-                "Explore the World of Donghua",
+                "Donghua",
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.white70,
