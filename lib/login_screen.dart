@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    if (email == 'admin@mail.com' && password == 'admin') {
+    if (email == 'dava@mail.com' && password == 'admin') {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(

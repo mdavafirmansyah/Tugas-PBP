@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'models/donghua.dart';
 import 'models/action_donghua.dart';
 import 'models/romance_donghua.dart';
+import 'package:easy_stars/easy_stars.dart';
 
 class DetailPage extends StatefulWidget {
   final Donghua item;
@@ -14,6 +15,7 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   bool isExpanded = false;
+  double _rating = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -61,14 +63,21 @@ class _DetailPageState extends State<DetailPage> {
                     children: [
                       const Icon(Icons.movie, size: 18, color: Colors.grey),
                       const SizedBox(width: 6),
-                      Text("Studio: ${item.studio}",
-                          style: const TextStyle(fontSize: 16)),
+                      Text(
+                        "Studio: ${item.studio}",
+                        style: const TextStyle(fontSize: 16),
+                      ),
                       const SizedBox(width: 16),
-                      const Icon(Icons.calendar_today,
-                          size: 18, color: Colors.grey),
+                      const Icon(
+                        Icons.calendar_today,
+                        size: 18,
+                        color: Colors.grey,
+                      ),
                       const SizedBox(width: 6),
-                      Text("Tahun: ${item.year}",
-                          style: const TextStyle(fontSize: 16)),
+                      Text(
+                        "Tahun: ${item.year}",
+                        style: const TextStyle(fontSize: 16),
+                      ),
                     ],
                   ),
 
@@ -80,8 +89,10 @@ class _DetailPageState extends State<DetailPage> {
                       children: [
                         const Icon(Icons.person, color: Colors.blueAccent),
                         const SizedBox(width: 6),
-                        Text("MC: ${item.mainCharacter}",
-                            style: const TextStyle(fontSize: 16)),
+                        Text(
+                          "MC: ${item.mainCharacter}",
+                          style: const TextStyle(fontSize: 16),
+                        ),
                       ],
                     )
                   else if (item is RomanceDonghua)
@@ -89,26 +100,39 @@ class _DetailPageState extends State<DetailPage> {
                       children: [
                         const Icon(Icons.favorite, color: Colors.pinkAccent),
                         const SizedBox(width: 6),
-                        Text("Tema: ${item.theme}",
-                            style: const TextStyle(fontSize: 16)),
+                        Text(
+                          "Tema: ${item.theme}",
+                          style: const TextStyle(fontSize: 16),
+                        ),
                       ],
                     ),
 
                   const Divider(height: 32),
 
+                  EasyStarsRating(
+                    initialRating: 4.0,
+                    animationConfig: StarAnimationConfig.scale,
+                    filledColor: Colors.purple,
+                    onRatingChanged: (value) {
+                      setState(() {
+                        _rating = value;
+                      });
+                    },
+                  ),
+
                   // Sinopsis expandable
                   const Text(
                     "Sinopsis",
-                    style: TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
 
                   Text(
                     item.synopsis,
                     maxLines: isExpanded ? null : 3,
-                    overflow:
-                        isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                    overflow: isExpanded
+                        ? TextOverflow.visible
+                        : TextOverflow.ellipsis,
                     textAlign: TextAlign.justify,
                     style: const TextStyle(fontSize: 16),
                   ),
@@ -121,7 +145,7 @@ class _DetailPageState extends State<DetailPage> {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
