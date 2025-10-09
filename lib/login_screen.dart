@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:login/home_page.dart';
-import 'package:login/home_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,7 +14,7 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscureText = true;
 
-  void _login() {
+  void _login() async {
     String email = _emailController.text.trim();
     String password = _passwordController.text;
 
@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
       );
       return;
     }
-   if (!email.contains('@')) {
+    if (!email.contains('@')) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Format email tidak valid')));
@@ -32,6 +32,10 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     if (email == 'dava@mail.com' && password == 'admin') {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('userEmail', email);
+      
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -42,7 +46,7 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Email atau password salah')),
-     );
+      );
     }
   }
 

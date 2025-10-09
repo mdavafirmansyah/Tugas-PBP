@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'detail_page.dart';
 import 'data/donghua_data.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 class MyHomePage extends StatelessWidget {
   final String title;
@@ -8,19 +10,54 @@ class MyHomePage extends StatelessWidget {
 
   const MyHomePage({super.key, required this.title, required this.email});
 
+  void _showDeviceInfoDialog(BuildContext context) async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    String deviceName = 'Unknown';
+    String deviceVersion = 'Unknown';
+
+    try {
+      if (Platform.isAndroid) {
+        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+        deviceName = androidInfo.model; // e.g. "Pixel 7"
+        deviceVersion = "Android ${androidInfo.version.release}";
+        print('Running on ${androidInfo.model}');
+      } else if (Platform.isIOS) {
+        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+        deviceName = iosInfo.utsname.machine!; // e.g. "iPhone15,2"
+        deviceVersion = "iOS ${iosInfo.systemVersion}";
+        print('Running on ${iosInfo.utsname.machine}');
+      }
+    } catch (e) {
+      deviceName = "Gagal mendapatkan info";
+      deviceVersion = e.toString();
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Informasi Perangkat"),
+        content: Text("Model: $deviceName\nSistem Operasi: $deviceVersion"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         actions: [
+          IconButton(icon: const Icon(Icons.search), onPressed: () {}),
+
           IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () {},
+            icon: const Icon(Icons.info_outline),
+            onPressed: () => _showDeviceInfoDialog(context),
           ),
         ],
       ),

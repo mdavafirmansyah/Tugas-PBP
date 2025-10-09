@@ -4,13 +4,13 @@ class ActionDonghua extends Donghua {
   String _mainCharacter;
 
   ActionDonghua(
-    String title,
-    String studio,
-    int year,
-    String imagePath,
-    String synopsis,
+    super.title,
+    super.studio,
+    super.year,
+    super.imagePath,
+    super.synopsis,
     this._mainCharacter,
-  ) : super(title, studio, year, imagePath, synopsis);
+  );
 
   // mainCharacter
   String get mainCharacter => _mainCharacter;

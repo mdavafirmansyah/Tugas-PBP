@@ -4,13 +4,13 @@ class RomanceDonghua extends Donghua {
   String _theme;
 
   RomanceDonghua(
-    String title,
-    String studio,
-    int year,
-    String imagePath,
-    String synopsis,
+    super.title,
+    super.studio,
+    super.year,
+    super.imagePath,
+    super.synopsis,
     this._theme,
-  ) : super(title, studio, year, imagePath, synopsis);
+  );
 
   // theme
   String get theme => _theme;

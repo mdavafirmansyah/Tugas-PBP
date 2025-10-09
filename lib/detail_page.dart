@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:login/webview_page.dart';
 import 'models/donghua.dart';
 import 'models/action_donghua.dart';
 import 'models/romance_donghua.dart';
 import 'package:easy_stars/easy_stars.dart';
+import 'package:getwidget/getwidget.dart';
+import 'package:intl/intl.dart';
+
 
 class DetailPage extends StatefulWidget {
   final Donghua item;
+  
 
   const DetailPage({super.key, required this.item});
 
@@ -20,6 +25,9 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
+     final formattedYear = DateFormat.y().format(
+      DateTime(item.year), // kalau year = 2017 → 2017
+    );
 
     return Scaffold(
       appBar: AppBar(title: Text(item.title)),
@@ -58,6 +66,31 @@ class _DetailPageState extends State<DetailPage> {
 
                   const SizedBox(height: 12),
 
+                   SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.play_circle_filled),
+                      label: const Text("Tonton Trailer"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepPurple,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      onPressed: () {
+                        // Navigasi ke WebViewPage saat ditekan
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WebViewPage(
+                              title: "${item.title} Trailer",
+                              url: "https://www.youtube.com/results?search_query=${item.title}+trailer",
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
                   // Info studio & tahun dengan ikon
                   Row(
                     children: [
@@ -75,7 +108,7 @@ class _DetailPageState extends State<DetailPage> {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        "Tahun: ${item.year}",
+                        "Tahun: $formattedYear",
                         style: const TextStyle(fontSize: 16),
                       ),
                     ],
@@ -112,36 +145,28 @@ class _DetailPageState extends State<DetailPage> {
                   EasyStarsRating(
                     initialRating: 4.0,
                     animationConfig: StarAnimationConfig.scale,
-                    filledColor: Colors.purple,
+                    filledColor: Colors.yellow,
                     onRatingChanged: (value) {
                       setState(() {
                         _rating = value;
                       });
                     },
                   ),
-
+                
                   // Sinopsis expandable
-                  const Text(
-                    "Sinopsis",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-
-                  Text(
-                    item.synopsis,
-                    maxLines: isExpanded ? null : 3,
-                    overflow: isExpanded
-                        ? TextOverflow.visible
-                        : TextOverflow.ellipsis,
-                    textAlign: TextAlign.justify,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-
-                  TextButton(
-                    onPressed: () {
-                      setState(() => isExpanded = !isExpanded);
-                    },
-                    child: Text(isExpanded ? "Read Less" : "Read More"),
+                  GFAccordion(
+                    title: 'Sinopsis',
+                    content: item.synopsis,
+                    collapsedIcon: const Icon(Icons.add),
+                    expandedIcon: const Icon(Icons.remove),
+                    titleBorderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(8),
+                      topRight: Radius.circular(8),
+                    ),
+                    contentBorderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(8),
+                      bottomRight: Radius.circular(8),
+                    ),
                   ),
                 ],
               ),
