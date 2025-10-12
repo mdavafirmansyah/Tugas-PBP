@@ -1,31 +1,24 @@
-class Donghua {
-  String _title;
-  String _studio;
-  int _year;
-  String _imagePath;
-  String _synopsis;
+import 'animasi_series.dart';
 
-  Donghua(this._title, this._studio, this._year, this._imagePath, this._synopsis);
+class Donghua extends AnimasiSeries {
+  final String originCountry = "China"; // Properti unik untuk Donghua
+  bool _is3D;
 
-  // title
-  String get title => _title;
-  set title(String value) => _title = value;
+  Donghua(
+    super.title,
+    super.studio,
+    super.year,
+    super.imagePath,
+    super.synopsis,
+    this._is3D,
+  );
 
-  // studio
-  String get studio => _studio;
-  set studio(String value) => _studio = value;
+  bool get is3D => _is3D;
+  set is3D(bool value) => _is3D = value;
 
-  // year
-  int get year => _year;
-  set year(int value) => _year = value;
-
-  // imagePath
-  String get imagePath => _imagePath;
-  set imagePath(String value) => _imagePath = value;
-
-  // synopsis
-  String get synopsis => _synopsis;
-  set synopsis(String value) => _synopsis = value;
-
-  String getInfo() => "$title ($year) - Studio: $studio";
+  @override
+  String getInfo() {
+    String format = _is3D ? "3D" : "2D";
+    return "$title [Donghua] ($year) - Studio: $studio";
+  }
 }

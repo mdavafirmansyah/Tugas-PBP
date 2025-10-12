@@ -1,11 +1,16 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:login/models/animasi_series.dart';
+import 'package:login/models/anime.dart';
 import 'package:login/models/donghua.dart';
 import 'package:login/webview_page.dart'; // Pastikan import ini ada untuk tombol "Tonton"
 import 'detail_page.dart';
 import 'data/donghua_data.dart';
+import 'data/anime_data.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+
+enum FilterType { semua, anime, donghua }
 
 class MyHomePage extends StatefulWidget {
   final String title;
@@ -18,7 +23,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  FilterType _selectedFilter = FilterType.semua;
   // Controller dan state HANYA untuk carousel
+
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
@@ -79,9 +86,73 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  //Buat widget untuk UI Filternya
+  Widget _buildFilterChips() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildFilterChip("Semua", FilterType.semua),
+          _buildFilterChip("Anime", FilterType.anime),
+          _buildFilterChip("Donghua", FilterType.donghua),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterChip(String label, FilterType filterType) {
+    final bool isSelected = _selectedFilter == filterType;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedFilter = filterType;
+        });
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              color: isSelected ? Colors.amber : Colors.white70,
+            ),
+          ),
+          const SizedBox(height: 4),
+          if (isSelected)
+            Container(
+              height: 3,
+              width: 30,
+              decoration: BoxDecoration(
+                color: Colors.amber,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final List<Donghua> top5Random = donghuaList.take(5).toList();
+    final List<AnimasiSeries> allContentList = [
+      ...donghuaList,
+      ...animeList,
+    ];
+    final List<AnimasiSeries> top5Random = allContentList.take(5).toList();
+
+    //Buat list baru berdasarkan filter yang dipilih
+    List<AnimasiSeries> filteredList;
+    if (_selectedFilter == FilterType.anime) {
+      filteredList = allContentList.where((item) => item is Anime).toList();
+    } else if (_selectedFilter == FilterType.donghua) {
+      filteredList = allContentList.where((item) => item is Donghua).toList();
+    } else {
+      filteredList = allContentList; // Tipe 'semua'
+    }
+
 
     return Scaffold(
       appBar: AppBar(
@@ -154,11 +225,11 @@ class _MyHomePageState extends State<MyHomePage> {
                         controller: _pageController,
                         itemCount: top5Random.length,
                         itemBuilder: (context, index) {
-                          final donghua = top5Random[index];
+                          final item = top5Random[index];
                           return Hero(
-                            tag: 'popular-${donghua.title}',
+                            tag: 'popular-${item.title}',
                             child: Image.asset(
-                              donghua.imagePath,
+                              item.imagePath,
                               fit: BoxFit.cover,
                               width: double.infinity,
                             ),
@@ -281,14 +352,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                         onPressed: () {
-                          final donghua = top5Random[_currentPage];
+                          final item = top5Random[_currentPage];
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => WebViewPage(
-                                title: "${donghua.title} Trailer",
+                                title: "${item.title} Trailer",
                                 url:
-                                    "https://www.youtube.com/results?search_query=${donghua.title}+trailer",
+                                    "https://www.youtube.com/results?search_query=${item.title}+trailer",
                               ),
                             ),
                           );
@@ -299,14 +370,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
 
-                // --- BAGIAN SEMUA DONGHUA (GRIDVIEW) ---
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(16, 24, 16, 16),
-                  child: Text(
-                    "Semua Donghua",
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  ),
-                ),
+                // --- BAGIAN SEMUA (GRIDVIEW) ---
+               // Panggil dan tampilkan UI Filter di sini
+                _buildFilterChips(),
+                
+                const SizedBox(height: 16),
+
                 GridView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   shrinkWrap: true,
@@ -317,19 +386,21 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisSpacing: 16,
                     childAspectRatio: 0.6,
                   ),
-                  itemCount: donghuaList.length,
+                  // LANGKAH 6: Gunakan list yang sudah terfilter
+                  itemCount: filteredList.length,
                   itemBuilder: (context, index) {
-                    final donghua = donghuaList[index];
+                    final item = filteredList[index]; // Ambil item dari filteredList
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => DetailPage(item: donghua),
+                            builder: (_) => DetailPage(item: item),
                           ),
                         );
                       },
                       child: Card(
+                        // ... (Sisa kode untuk tampilan Card tidak berubah)
                         elevation: 5,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
@@ -339,9 +410,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           fit: StackFit.expand,
                           children: [
                             Hero(
-                              tag: donghua.title,
+                              tag: item.title,
                               child: Image.asset(
-                                donghua.imagePath,
+                                item.imagePath,
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -365,7 +436,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    donghua.title,
+                                    item.title,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
@@ -376,7 +447,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    donghua.getInfo(),
+                                    item.getInfo(),
                                     style: const TextStyle(
                                       fontSize: 12,
                                       color: Colors.white70,

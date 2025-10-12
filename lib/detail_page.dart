@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:login/webview_page.dart';
+import 'models/animasi_series.dart';
+import 'models/anime.dart';
 import 'models/donghua.dart';
-import 'models/action_donghua.dart';
-import 'models/romance_donghua.dart';
+// import 'models/action_donghua.dart';
+// import 'models/romance_donghua.dart';
 import 'package:easy_stars/easy_stars.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:intl/intl.dart';
 
 class DetailPage extends StatefulWidget {
-  final Donghua item;
+  final AnimasiSeries item;
 
   const DetailPage({super.key, required this.item});
 
@@ -38,6 +40,30 @@ class _DetailPageState extends State<DetailPage> {
       ],
     );
   }
+
+  // <-- WIDGET HELPER BARU untuk menampilkan info unik -->
+Widget _buildUniqueInfoWidget(AnimasiSeries item) {
+  IconData iconData = Icons.info_outline;
+  String title = "Info Tambahan";
+  String value = "N/A";
+
+  if (item is Donghua) {
+    iconData = item.is3D ? Icons.threed_rotation : Icons.layers;
+    title = "Format";
+    value = item.is3D ? "3D" : "2D";
+  } else if (item is Anime) {
+    iconData = Icons.book;
+    title = "Sumber Adaptasi";
+    value = item.source;
+  }
+
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      _buildInfoColumn(iconData, title, value),
+    ],
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -151,29 +177,37 @@ class _DetailPageState extends State<DetailPage> {
 
                 const Divider(height: 32, indent: 16, endIndent: 16),
 
-                // Info tambahan sesuai tipe
-                if (item is ActionDonghua)
-                  Row(
-                    children: [
-                      const Icon(Icons.person, color: Colors.blueAccent),
-                      const SizedBox(width: 6),
-                      Text(
-                        "MC: ${item.mainCharacter}",
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  )
-                else if (item is RomanceDonghua)
-                  Row(
-                    children: [
-                      const Icon(Icons.favorite, color: Colors.pinkAccent),
-                      const SizedBox(width: 6),
-                      Text(
-                        "Tema: ${item.theme}",
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
+                  // <-- BAGIAN BARU: Menampilkan Info Unik -->
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: _buildUniqueInfoWidget(item), // Panggil helper widget
+                ),
+
+                
+
+                // // Info tambahan sesuai tipe
+                // if (item is ActionDonghua)
+                //   Row(
+                //     children: [
+                //       const Icon(Icons.person, color: Colors.blueAccent),
+                //       const SizedBox(width: 6),
+                //       Text(
+                //         "MC: ${item.mainCharacter}",
+                //         style: const TextStyle(fontSize: 16),
+                //       ),
+                //     ],
+                //   )
+                // else if (item is RomanceDonghua)
+                //   Row(
+                //     children: [
+                //       const Icon(Icons.favorite, color: Colors.pinkAccent),
+                //       const SizedBox(width: 6),
+                //       Text(
+                //         "Tema: ${item.theme}",
+                //         style: const TextStyle(fontSize: 16),
+                //       ),
+                //     ],
+                //   ),
 
                 const Divider(height: 32),
 
