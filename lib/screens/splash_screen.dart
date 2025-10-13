@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:login/home_page.dart';
+import 'package:login/screens/home/home_page.dart';
 import 'login_screen.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';

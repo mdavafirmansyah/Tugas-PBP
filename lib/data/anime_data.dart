@@ -35,11 +35,11 @@ final List<Anime> animeList = [
     "Manga", // sourceMaterial
   ),
   Anime(
-    "Cyberpunk: Edgerunners",
-    "Studio Trigger",
-    2022,
-    "assets/images/edgerunners.jpg", // Pastikan gambar ada
-    "Seorang anak jalanan mencoba bertahan hidup di kota metropolis...",
-    "Video Game", // sourceMaterial
+    "Naruto Shippuden",
+    "Pierrot",
+    2007,
+    "assets/images/naruto.jpg", // Pastikan gambar ada
+    " Naruto Uzumaki, adalah seorang ninja remaja yang keras dan hiperaktif yang terus-menerus mencari persetujuan dan pengakuan, serta menjadi Hokage, yang diakui sebagai pemimpin dan ninja terkuat di desa.",
+    "Manga", // sourceMaterial
   ),
 ];

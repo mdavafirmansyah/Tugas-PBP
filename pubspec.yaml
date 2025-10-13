@@ -44,6 +44,7 @@ dependencies:
   device_info_plus: ^12.1.0
   webview_flutter_web: ^0.2.3+4
   flutter_animate: ^4.5.2
+  glassmorphism: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -88,6 +89,11 @@ flutter:
       - assets/images/fog_hills.jpg
       - assets/images/martial_universe.webp
       - assets/images/the_outcast.jpg
+      - assets/images/jujutsu_kaisen.jpg
+      - assets/images/demon_slayer.jpg
+      - assets/images/naruto.jpg
+      - assets/images/one_piece.jpg
+      - assets/images/attack_on_titan.jpg
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpegfl

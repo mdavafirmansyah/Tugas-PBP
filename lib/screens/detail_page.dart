@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:login/webview_page.dart';
-import 'models/animasi_series.dart';
-import 'models/anime.dart';
-import 'models/donghua.dart';
-// import 'models/action_donghua.dart';
-// import 'models/romance_donghua.dart';
+import '../models/animasi_series.dart';
+import '../models/anime.dart';
+import '../models/donghua.dart';
 import 'package:easy_stars/easy_stars.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:intl/intl.dart';

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:login/models/animasi_series.dart';
 import 'package:login/models/anime.dart';
 import 'package:login/models/donghua.dart';
-import 'package:login/webview_page.dart'; // Pastikan import ini ada untuk tombol "Tonton"
-import 'detail_page.dart';
-import 'data/donghua_data.dart';
-import 'data/anime_data.dart';
+import 'package:login/screens/home/componen/category_filter_chips.dart';
+import 'package:login/screens/home/componen/gridview.dart';
+import 'package:login/webview_page.dart';
+import 'package:login/data/donghua_data.dart';
+import 'package:login/data/anime_data.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 enum FilterType { semua, anime, donghua }
 
@@ -23,11 +23,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  FilterType _selectedFilter = FilterType.semua;
+  // Duplicate declaration removed: FilterType _selectedFilter = FilterType.semua;
   // Controller dan state HANYA untuk carousel
 
   final PageController _pageController = PageController();
   int _currentPage = 0;
+
+  // State untuk Filter & Search
+  FilterType _selectedFilter = FilterType.semua;
+  bool _isSearching = false;
+  String _searchQuery = "";
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -42,11 +48,15 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       }
     });
+    _searchController.addListener(() {
+      setState(() => _searchQuery = _searchController.text);
+    });
   }
 
   @override
   void dispose() {
     _pageController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -129,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Colors.amber,
                 borderRadius: BorderRadius.circular(2),
               ),
-            )
+            ),
         ],
       ),
     );
@@ -137,10 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<AnimasiSeries> allContentList = [
-      ...donghuaList,
-      ...animeList,
-    ];
+    final List<AnimasiSeries> allContentList = [...donghuaList, ...animeList];
     final List<AnimasiSeries> top5Random = allContentList.take(5).toList();
 
     //Buat list baru berdasarkan filter yang dipilih
@@ -152,36 +159,75 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
       filteredList = allContentList; // Tipe 'semua'
     }
-
+    // TAMBAHKAN INI: Logika untuk filter berdasarkan search query
+    if (_searchQuery.isNotEmpty) {
+      filteredList = filteredList
+          .where(
+            (item) =>
+                item.title.toLowerCase().contains(_searchQuery.toLowerCase()),
+          )
+          .toList();
+    }
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text(
-          widget.title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        actions: [
-          IconButton(icon: const Icon(Icons.search), onPressed: () {}),
-          IconButton(
-            icon: const Icon(Icons.info_outline),
-            onPressed: () => _showDeviceInfoDialog(context),
-          ),
-        ],
+        // Tampilkan search bar atau judul berdasarkan state _isSearching
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                autofocus: true, // Langsung fokus ke search bar saat muncul
+                decoration: const InputDecoration(
+                  hintText: 'Cari judul...',
+                  hintStyle: TextStyle(color: Colors.white70),
+                  border: InputBorder.none,
+                ),
+                style: const TextStyle(color: Colors.white, fontSize: 18.0),
+              )
+            : Text(
+                widget.title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+        actions: _isSearching
+            ? [
+                // Jika sedang mencari, tampilkan tombol 'X' untuk batal
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = false;
+                      _searchController.clear();
+                    });
+                  },
+                ),
+              ]
+            : [
+                // Jika tidak mencari, tampilkan tombol search dan info
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    setState(() {
+                      _isSearching = true;
+                    });
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.info_outline),
+                  onPressed: () => _showDeviceInfoDialog(context),
+                ),
+              ],
       ),
+
       extendBodyBehindAppBar: true,
       body: Container(
         // 1. Menerapkan background gradien dari LoginPage
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF6A11CB), // <-- Ganti warna ini
-              Color(0xFF2575FC),
-            ],
+            colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -201,7 +247,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         "Login sebagai: ${widget.email}",
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Colors.grey,
+                          color: Colors.white,
                         ),
                       ),
                       const Text(
@@ -306,7 +352,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
 
-                // --- BAGIAN INFO BOX MERAH DI BAWAH CAROUSEL ---
+                // --- BAGIAN INFO BOX DI BAWAH CAROUSEL ---
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -371,98 +417,20 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
 
                 // --- BAGIAN SEMUA (GRIDVIEW) ---
-               // Panggil dan tampilkan UI Filter di sini
-                _buildFilterChips(),
-                
+                // Panggil dan tampilkan UI Filter di sini
+                CategoryFilterChips(
+                  selectedFilter: _selectedFilter,
+                  onFilterSelected: (filter) {
+                    setState(() => _selectedFilter = filter);
+                  },
+                ),
+
                 const SizedBox(height: 16),
 
-                GridView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.6,
-                  ),
-                  // LANGKAH 6: Gunakan list yang sudah terfilter
-                  itemCount: filteredList.length,
-                  itemBuilder: (context, index) {
-                    final item = filteredList[index]; // Ambil item dari filteredList
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => DetailPage(item: item),
-                          ),
-                        );
-                      },
-                      child: Card(
-                        // ... (Sisa kode untuk tampilan Card tidak berubah)
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            Hero(
-                              tag: item.title,
-                              child: Image.asset(
-                                item.imagePath,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Colors.black.withOpacity(0.8),
-                                    Colors.transparent,
-                                  ],
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.center,
-                                ),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 12,
-                              left: 12,
-                              right: 12,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    item.title,
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: Colors.white,
-                                    ),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    item.getInfo(),
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white70,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ).animate().fade(duration: 500.ms).slideY(begin: 0.5);
-                  },
+                // Panggil widget grid yang sudah dipisah
+                ContentGridView(
+                  items: filteredList,
+                  listKey: _selectedFilter.toString() + _searchQuery,
                 ),
                 const SizedBox(height: 16),
               ],
