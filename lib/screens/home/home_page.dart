@@ -9,9 +9,12 @@ import 'package:login/webview_page.dart';
 import 'package:login/data/donghua_data.dart';
 import 'package:login/data/anime_data.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
+/// Enum untuk mengatur jenis filter
 enum FilterType { semua, anime, donghua }
 
+/// 🏠 Halaman utama aplikasi
 class MyHomePage extends StatefulWidget {
   final String title;
   final String email;
@@ -23,21 +26,24 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  // Duplicate declaration removed: FilterType _selectedFilter = FilterType.semua;
-  // Controller dan state HANYA untuk carousel
+  // 🔹 Variabel untuk konten acak (gabungan anime & donghua)
+  List<AnimasiSeries> _randomizedContentList = [];
 
+  // 🔹 Controller untuk carousel banner
   final PageController _pageController = PageController();
   int _currentPage = 0;
 
-  // State untuk Filter & Search
+  // 🔹 State untuk Filter & Search
   FilterType _selectedFilter = FilterType.semua;
   bool _isSearching = false;
   String _searchQuery = "";
   final TextEditingController _searchController = TextEditingController();
 
+  // 🧩 Inisialisasi awal
   @override
   void initState() {
     super.initState();
+
     _pageController.addListener(() {
       if (_pageController.page != null) {
         int next = _pageController.page!.round();
@@ -48,9 +54,13 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       }
     });
+
     _searchController.addListener(() {
       setState(() => _searchQuery = _searchController.text);
     });
+
+    // Gabungkan semua konten dan acak
+    _randomizedContentList = [...donghuaList, ...animeList]..shuffle();
   }
 
   @override
@@ -60,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
-  // Fungsi untuk menampilkan info perangkat (tidak berubah)
+  // 📱 Dialog Info Perangkat (Android/iOS)
   void _showDeviceInfoDialog(BuildContext context) async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     String deviceName = 'Unknown';
@@ -96,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  //Buat widget untuk UI Filternya
+  // 🔹 Widget Filter Chip (Semua / Anime / Donghua)
   Widget _buildFilterChips() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
@@ -147,19 +157,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<AnimasiSeries> allContentList = [...donghuaList, ...animeList];
+    // 🔹 Ambil semua konten
+    final List<AnimasiSeries> allContentList = _randomizedContentList;
     final List<AnimasiSeries> top5Random = allContentList.take(5).toList();
 
-    //Buat list baru berdasarkan filter yang dipilih
+    // 🔹 Filter konten berdasarkan pilihan
     List<AnimasiSeries> filteredList;
     if (_selectedFilter == FilterType.anime) {
       filteredList = allContentList.where((item) => item is Anime).toList();
     } else if (_selectedFilter == FilterType.donghua) {
       filteredList = allContentList.where((item) => item is Donghua).toList();
     } else {
-      filteredList = allContentList; // Tipe 'semua'
+      filteredList = allContentList;
     }
-    // TAMBAHKAN INI: Logika untuk filter berdasarkan search query
+
+    // 🔹 Filter berdasarkan pencarian
     if (_searchQuery.isNotEmpty) {
       filteredList = filteredList
           .where(
@@ -170,14 +182,14 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        // Tampilkan search bar atau judul berdasarkan state _isSearching
         title: _isSearching
             ? TextField(
                 controller: _searchController,
-                autofocus: true, // Langsung fokus ke search bar saat muncul
+                autofocus: true,
                 decoration: const InputDecoration(
                   hintText: 'Cari judul...',
                   hintStyle: TextStyle(color: Colors.white70),
@@ -194,7 +206,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
         actions: _isSearching
             ? [
-                // Jika sedang mencari, tampilkan tombol 'X' untuk batal
                 IconButton(
                   icon: const Icon(Icons.close),
                   onPressed: () {
@@ -206,7 +217,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ]
             : [
-                // Jika tidak mencari, tampilkan tombol search dan info
                 IconButton(
                   icon: const Icon(Icons.search),
                   onPressed: () {
@@ -222,9 +232,8 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
       ),
 
-      extendBodyBehindAppBar: true,
+      // 🌈 Background gradien agar konsisten dengan halaman detail
       body: Container(
-        // 1. Menerapkan background gradien dari LoginPage
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFF6A11CB), Color(0xFF2575FC)],
@@ -237,7 +246,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header halaman
+                // 🧍 Info pengguna
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                   child: Column(
@@ -247,7 +256,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         "Login sebagai: ${widget.email}",
                         style: const TextStyle(
                           fontSize: 16,
-                          color: Colors.white,
+                          color: Colors.white70,
                         ),
                       ),
                       const Text(
@@ -255,13 +264,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                     ],
                   ),
                 ),
 
-                // --- BAGIAN CAROUSEL BANNER UTAMA ---
+                // 🎞️ Carousel Banner
                 Container(
                   height: 250,
                   child: Stack(
@@ -274,26 +284,27 @@ class _MyHomePageState extends State<MyHomePage> {
                           final item = top5Random[index];
                           return Hero(
                             tag: 'popular-${item.title}',
-                            child: Image.asset(
-                              item.imagePath,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.asset(
+                                item.imagePath,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                              ),
                             ),
                           );
                         },
                       ),
-                      // Indikator Dot (posisi di kanan atas)
+
+                      // 🔘 Indikator dots
                       Positioned(
-                        top: 10,
-                        right: 16,
+                        bottom: 10,
                         child: Row(
                           children: List.generate(top5Random.length, (index) {
                             return Container(
                               width: 8.0,
                               height: 8.0,
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 4.0,
-                              ),
+                              margin: const EdgeInsets.symmetric(horizontal: 4),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: _currentPage == index
@@ -304,61 +315,14 @@ class _MyHomePageState extends State<MyHomePage> {
                           }),
                         ),
                       ),
-                      // Tombol Kiri (fungsi sudah diperbaiki)
-                      Positioned(
-                        left: 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.2),
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.arrow_back_ios_new,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              _pageController.previousPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeOut,
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                      // Tombol Kanan (fungsi sudah diperbaiki)
-                      Positioned(
-                        right: 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.2),
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.arrow_forward_ios,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {
-                              _pageController.nextPage(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeOut,
-                              );
-                            },
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),
 
-                // --- BAGIAN INFO BOX DI BAWAH CAROUSEL ---
+                // 🧾 Info box di bawah carousel
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  color: Colors.transparent,
+                  padding: const EdgeInsets.all(16),
+                  color: Colors.black.withOpacity(0.2),
                   child: Row(
                     children: [
                       Expanded(
@@ -370,7 +334,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black,
+                                color: Colors.white,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -380,7 +344,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               top5Random[_currentPage].synopsis,
                               style: const TextStyle(
                                 fontSize: 12,
-                                color: Colors.black,
+                                color: Colors.white70,
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -391,7 +355,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       const SizedBox(width: 16),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black.withOpacity(0.8),
+                          backgroundColor: Colors.deepPurpleAccent,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -404,8 +368,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             MaterialPageRoute(
                               builder: (context) => WebViewPage(
                                 title: "${item.title} Trailer",
-                                url:
-                                    "https://www.youtube.com/results?search_query=${item.title}+trailer",
+                                url: item.trailerUrl,
                               ),
                             ),
                           );
@@ -416,8 +379,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
 
-                // --- BAGIAN SEMUA (GRIDVIEW) ---
-                // Panggil dan tampilkan UI Filter di sini
+                // 🧩 Filter kategori
                 CategoryFilterChips(
                   selectedFilter: _selectedFilter,
                   onFilterSelected: (filter) {
@@ -427,7 +389,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
                 const SizedBox(height: 16),
 
-                // Panggil widget grid yang sudah dipisah
+                // 🗂️ Grid konten
                 ContentGridView(
                   items: filteredList,
                   listKey: _selectedFilter.toString() + _searchQuery,

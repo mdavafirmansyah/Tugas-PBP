@@ -10,6 +10,8 @@ class Donghua extends AnimasiSeries {
     super.year,
     super.imagePath,
     super.synopsis,
+    super.genres,
+    super.trailerUrl,
     this._is3D,
   );
 

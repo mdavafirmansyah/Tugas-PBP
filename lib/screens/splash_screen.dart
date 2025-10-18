@@ -96,15 +96,15 @@ class _SplashScreenState extends State<SplashScreen>
             children: [
               // Logo / gambar
               Image.asset(
-                'assets/images/login_ui.png',
-                width: 150,
-                height: 150,
+                'assets/images/splashscreen.png',
+                width: 300,
+                height: 300,
               ),
               const SizedBox(height: 20),
 
               // Nama Aplikasi
               const Text(
-                'Welcome to MyApp',
+                'Welcome to AniHua',
                 style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
@@ -115,7 +115,7 @@ class _SplashScreenState extends State<SplashScreen>
 
               // Tagline tambahan
               const Text(
-                "Donghua",
+                "Anime & Donghua",
                 style: TextStyle(fontSize: 16, color: Colors.white70),
               ),
               const SizedBox(height: 20),

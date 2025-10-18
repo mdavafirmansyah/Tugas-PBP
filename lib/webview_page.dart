@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class WebViewPage extends StatefulWidget {
   final String title;
@@ -19,46 +20,14 @@ class _WebViewPageState extends State<WebViewPage> {
   void initState() {
     super.initState();
 
-    controller = WebViewController()
-      // ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      // ..setNavigationDelegate(
-      //   NavigationDelegate(
-      //     onProgress: (int progress) {
-      //       setState(() {
-      //         loadingPercentage = progress;
-      //       });
-      //     },
-      //     onPageStarted: (String url) {
-      //       setState(() {
-      //         loadingPercentage = 0;
-      //       });
-      //     },
-      //     onPageFinished: (String url) {
-      //       setState(() {
-      //         loadingPercentage = 100;
-      //       });
-      //     },
-      //     onWebResourceError: (WebResourceError error) {
-      //       // Anda bisa menampilkan pesan error di sini jika perlu
-      //       debugPrint('''
-      //         Page resource error:
-      //           code: ${error.errorCode}
-      //           description: ${error.description}
-      //           errorType: ${error.errorType}
-      //           isForMainFrame: ${error.isForMainFrame}
-      //       ''');
-      //     },
-      //     onNavigationRequest: (NavigationRequest request) {
-      //       if (request.url.startsWith('https://www.youtube.com/')) {
-      //         debugPrint('Blocking navigation to ${request.url}');
-      //         return NavigationDecision.prevent;
-      //       }
-      //       debugPrint('Allowing navigation to ${request.url}');
-      //       return NavigationDecision.navigate;
-      //     },
-      //   ),
-      // )
-      ..loadRequest(Uri.parse(widget.url));
+    controller = WebViewController();
+    if (!kIsWeb) {
+      controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      controller.setBackgroundColor(const Color(0x00000000));
+    }
+
+    // Lanjutkan konfigurasi lainnya seperti biasa
+    controller.loadRequest(Uri.parse(widget.url));
   }
 
   @override

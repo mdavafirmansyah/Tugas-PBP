@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:login/webview_page.dart';
-import '../models/animasi_series.dart';
-import '../models/anime.dart';
-import '../models/donghua.dart';
+import 'package:login/models/animasi_series.dart';
+import 'package:login/models/anime.dart';
+import 'package:login/models/donghua.dart';
 import 'package:easy_stars/easy_stars.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:intl/intl.dart';
@@ -24,11 +24,11 @@ class _DetailPageState extends State<DetailPage> {
   Widget _buildInfoColumn(IconData icon, String title, String value) {
     return Column(
       children: [
-        Icon(icon, color: Colors.grey.shade600, size: 28),
+        Icon(icon, color: Colors.white, size: 28),
         const SizedBox(height: 4),
         Text(
           title,
-          style: TextStyle(color: Colors.grey.shade700, fontSize: 12),
+          style: TextStyle(color: Colors.white, fontSize: 12),
         ),
         const SizedBox(height: 2),
         Text(
@@ -40,34 +40,52 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   // <-- WIDGET HELPER BARU untuk menampilkan info unik -->
-Widget _buildUniqueInfoWidget(AnimasiSeries item) {
-  IconData iconData = Icons.info_outline;
-  String title = "Info Tambahan";
-  String value = "N/A";
+  Widget _buildUniqueInfoWidget(AnimasiSeries item) {
+    IconData iconData = Icons.info_outline;
+    String title = "Info Tambahan";
+    String value = "N/A";
 
-  if (item is Donghua) {
-    iconData = item.is3D ? Icons.threed_rotation : Icons.layers;
-    title = "Format";
-    value = item.is3D ? "3D" : "2D";
-  } else if (item is Anime) {
-    iconData = Icons.book;
-    title = "Sumber Adaptasi";
-    value = item.source;
+    if (item is Donghua) {
+      iconData = item.is3D ? Icons.threed_rotation : Icons.layers;
+      title = "Format";
+      value = item.is3D ? "3D" : "2D";
+    } else if (item is Anime) {
+      iconData = Icons.book;
+      title = "Sumber Adaptasi";
+      value = item.source;
+    }
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [_buildInfoColumn(iconData, title, value)],
+    );
   }
 
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: [
-      _buildInfoColumn(iconData, title, value),
-    ],
-  );
-}
+  // 🟣 Widget untuk menampilkan genres
+  Widget _buildGenreChips(List<String> genres) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: -8,
+      children: genres
+          .map(
+            (genre) => Chip(
+              label: Text(genre),
+              backgroundColor: Colors.black.withOpacity(0.3),
+              labelStyle: const TextStyle(color: Colors.white),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
     final formattedYear = DateFormat.y().format(
-      DateTime(item.year), // kalau year = 2017 → 2017
+      DateTime(item.year), 
     );
 
     return Scaffold(
@@ -101,14 +119,32 @@ Widget _buildUniqueInfoWidget(AnimasiSeries item) {
               ),
 
               flexibleSpace: FlexibleSpaceBar(
-                background: Hero(
-                  // Memindahkan Hero ke sini
-                  tag: widget.item.title, // Tag Hero harus unik dan konsisten
-                  child: Image.asset(item.imagePath, fit: BoxFit.cover),
+                background: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Hero(
+                      tag: widget.item.title,
+                      child: Image.asset(item.imagePath, fit: BoxFit.cover),
+                ),
+                 // Overlay gelap agar teks terlihat jelas
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.black.withOpacity(0.4),
+                            Colors.transparent,
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
 
+            // KONTEN DETAIL
             SliverList(
               delegate: SliverChildListDelegate([
                 Padding(
@@ -121,6 +157,7 @@ Widget _buildUniqueInfoWidget(AnimasiSeries item) {
                         style: const TextStyle(
                           fontSize: 26,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -132,10 +169,14 @@ Widget _buildUniqueInfoWidget(AnimasiSeries item) {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.deepPurple,
                             foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 32,
+                              vertical: 14,
+                            ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
+                            elevation: 4,
                           ),
                           onPressed: () {
                             Navigator.push(
@@ -143,8 +184,7 @@ Widget _buildUniqueInfoWidget(AnimasiSeries item) {
                               MaterialPageRoute(
                                 builder: (context) => WebViewPage(
                                   title: "${item.title} Trailer",
-                                  url:
-                                      "https://www.youtube.com/results?search_query=${item.title}+trailer", // URL sementara
+                                  url: item.trailerUrl,
                                 ),
                               ),
                             );
@@ -154,7 +194,8 @@ Widget _buildUniqueInfoWidget(AnimasiSeries item) {
                     ],
                   ),
                 ),
-                // Bagian Info yang Rapi
+
+                // Bagian Info
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -172,43 +213,45 @@ Widget _buildUniqueInfoWidget(AnimasiSeries item) {
                     ],
                   ),
                 ),
+                const SizedBox(height: 12),
+                const Divider(
+                  height: 32,
+                  thickness: 1,
+                  color: Colors.white24,
+                  indent: 16,
+                  endIndent: 16,
+                ),
 
-                const Divider(height: 32, indent: 16, endIndent: 16),
-
-                  // <-- BAGIAN BARU: Menampilkan Info Unik -->
+                //  Menampilkan Info Unik
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: _buildUniqueInfoWidget(item), // Panggil helper widget
                 ),
 
-                
-
-                // // Info tambahan sesuai tipe
-                // if (item is ActionDonghua)
-                //   Row(
-                //     children: [
-                //       const Icon(Icons.person, color: Colors.blueAccent),
-                //       const SizedBox(width: 6),
-                //       Text(
-                //         "MC: ${item.mainCharacter}",
-                //         style: const TextStyle(fontSize: 16),
-                //       ),
-                //     ],
-                //   )
-                // else if (item is RomanceDonghua)
-                //   Row(
-                //     children: [
-                //       const Icon(Icons.favorite, color: Colors.pinkAccent),
-                //       const SizedBox(width: 6),
-                //       Text(
-                //         "Tema: ${item.theme}",
-                //         style: const TextStyle(fontSize: 16),
-                //       ),
-                //     ],
-                //   ),
+                // 🔹 Tampilkan Genre (jika tersedia)
+                if (item.genres.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Genres",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        _buildGenreChips(item.genres),
+                      ],
+                    ),
+                  ),
 
                 const Divider(height: 32),
 
+                // Rating bintang
                 EasyStarsRating(
                   initialRating: 4.0,
                   animationConfig: StarAnimationConfig.scale,
@@ -219,6 +262,7 @@ Widget _buildUniqueInfoWidget(AnimasiSeries item) {
                     });
                   },
                 ),
+                const SizedBox(height: 20),
 
                 // Sinopsis expandable
                 GFAccordion(

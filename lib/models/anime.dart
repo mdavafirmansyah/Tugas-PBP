@@ -2,7 +2,7 @@ import 'animasi_series.dart';
 
 class Anime extends AnimasiSeries {
   final String originCountry = "Japan"; // Properti unik untuk Anime
-String _source;
+  String _source;
 
   Anime(
     super.title,
@@ -10,6 +10,8 @@ String _source;
     super.year,
     super.imagePath,
     super.synopsis,
+    super.genres,
+    super.trailerUrl,
     this._source,
   );
 

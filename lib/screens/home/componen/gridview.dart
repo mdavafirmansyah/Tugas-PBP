@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import '../../detail_page.dart';
+import 'package:login/screens/detail_page.dart';
 import 'package:login/models/animasi_series.dart';
 
 class ContentGridView extends StatelessWidget {
@@ -34,7 +34,7 @@ class ContentGridView extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+        crossAxisCount: 3,
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
         childAspectRatio: 0.6,
@@ -59,20 +59,31 @@ class ContentGridView extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 Hero(
-                  tag: item.title,
-                  child: Image.asset(item.imagePath, fit: BoxFit.cover),
-                ),
+                      tag: item.title,
+                      child: Image.asset(item.imagePath, fit: BoxFit.cover),
+                    )
+                    .animate()
+                    .fadeIn(duration: 400.ms)
+                    .scale(
+                      begin: const Offset(0.8, 0.8),
+                      end: const Offset(1, 1),
+                    ),
                 Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.black.withOpacity(0.8), Colors.transparent],
+                      colors: [
+                        Colors.black.withOpacity(0.8),
+                        Colors.transparent,
+                      ],
                       begin: Alignment.bottomCenter,
                       end: Alignment.center,
                     ),
                   ),
                 ),
                 Positioned(
-                  bottom: 12, left: 12, right: 12,
+                  bottom: 12,
+                  left: 12,
+                  right: 12,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -89,7 +100,10 @@ class ContentGridView extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         item.getInfo(),
-                        style: const TextStyle(fontSize: 12, color: Colors.white70),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white70,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
