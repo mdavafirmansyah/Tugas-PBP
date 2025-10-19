@@ -1,7 +1,6 @@
 import '/models/donghua.dart';
 
 final List<Donghua> donghuaList = [
-
   Donghua(
     "Battle Through the Heavens",
     "Tencent",
@@ -29,7 +28,7 @@ final List<Donghua> donghuaList = [
     "assets/images/martial_universe.webp",
     "Lin Dong, pemuda biasa, menemukan jimat batu kuno dengan kekuatan misterius. Dari sanalah perjalanannya dimulai untuk melawan klan besar, menemukan cinta, dan berusaha menjadi legenda di dunia seni bela diri.",
     ["Action"],
-    "https://www.youtube.com/watch?v=KaSuQd4-a4I",
+    "https://www.youtube.com/embed/XQA5Egk5g3o",
     true,
   ),
   Donghua(
@@ -39,7 +38,7 @@ final List<Donghua> donghuaList = [
     "assets/images/kings.webp",
     "Ye Xiu, pemain profesional game Glory, dipaksa pensiun dari timnya. Namun, ia kembali ke dunia e-sports dengan identitas baru dan membuktikan dirinya sebagai legenda sejati.",
     ["Action, Game"],
-    "https://www.youtube.com/watch?v=y6LLlT5l7ks",
+    "https://www.youtube.com/embed/y6LLlT5l7ks",
     false,
   ),
   Donghua(
@@ -49,7 +48,7 @@ final List<Donghua> donghuaList = [
     "assets/images/fog_hills.jpg",
     "Di dunia di mana monster dan manusia hidup berdampingan, lima pejuang dengan kekuatan elemen berusaha melindungi umat manusia dari ancaman mematikan yang mengintai di balik kabut tebal.",
     ["Action"],
-    "https://www.youtube.com/watch?v=Ys-hfoBuJVA",
+    "https://www.youtube.com/embed/VTYRdGnAKYU",
     false,
   ),
   Donghua(
@@ -59,7 +58,7 @@ final List<Donghua> donghuaList = [
     "assets/images/white_cat.jpg",
     "Seorang pejabat rendah bertemu dengan kucing putih besar misterius yang ternyata adalah seorang jenderal legendaris. Bersama-sama mereka menghadapi intrik politik dan misteri dunia roh.",
     ["Comedy, Supernatural"],
-    "https://www.youtube.com/watch?v=XJfMk_DPC14",
+    "https://www.youtube.com/embed/XJfMk_DPC14",
     false,
   ),
   Donghua(
@@ -69,7 +68,7 @@ final List<Donghua> donghuaList = [
     "assets/images/the_outcast.jpg",
     "Zhang Chulan terjebak dalam dunia orang-orang dengan kekuatan khusus. Dengan warisan misterius dari kakeknya, ia berusaha mengungkap rahasia besar sambil bertahan hidup dari organisasi rahasia.",
     ["Action, Supernatural"],
-    "https://www.youtube.com/watch?v=pYB_MKgDdSk",
+    "https://www.youtube.com/embed/pYB_MKgDdSk",
     false,
   ),
 
@@ -80,7 +79,7 @@ final List<Donghua> donghuaList = [
     "assets/images/record_immortal.webp",
     "Han Li, seorang pemuda biasa dari keluarga miskin, secara kebetulan masuk ke dunia kultivasi. Dengan kecerdikan, tekad, dan keberuntungan, ia berjuang dari titik terendah untuk mencapai keabadian.",
     ["Action, Adventure, Fantasy"],
-    "https://youtu.be/qP7r0QdL1m0?si=pdWfYo0XgOkRJRrg",
+    "https://www.youtube.com/embed/y6E3j1imkHE",
     true,
   ),
   Donghua(
@@ -90,7 +89,7 @@ final List<Donghua> donghuaList = [
     "assets/images/perfect_world.jpg",
     "Shi Hao, seorang anak ajaib dari desa kecil, menapaki jalan kultivasi penuh darah dan air mata. Dengan tubuh yang diberkati, ia berusaha menjadi penguasa dunia dan melindungi orang-orang yang ia cintai.",
     ["Action, Adventure, Fantasy"],
-    "https://www.imdb.com/video/vi1696252441/?playlistId=tt14986786&ref_=tt_ov_ov_vi",
+    "https://www.youtube.com/embed/UIh9kLbAzO0",
     true,
   ),
   Donghua(
@@ -100,7 +99,7 @@ final List<Donghua> donghuaList = [
     "assets/images/swallowed.webp",
     "Di dunia pasca-apokaliptik, Luo Feng menemukan jalan untuk menjadi pejuang super. Dari bumi hingga luar angkasa, ia menantang nasib dan berjuang demi kemanusiaan.",
     ["Action, Adventure, Sci-Fi"],
-    "https://www.youtube.com/watch?v=pUcsPl2ikk4",
+    "https://www.youtube.com/embed/pUcsPl2ikk4",
     true,
   ),
   Donghua(
@@ -110,7 +109,7 @@ final List<Donghua> donghuaList = [
     "assets/images/star.webp",
     "Seorang pemuda biasa mendapatkan sistem yang membawanya ke dunia hiburan. Dengan usaha dan tekad, ia perlahan menjadi bintang besar yang bersinar di panggung dunia.",
     ["Comedy, Slice of Life"],
-    "https://www.youtube.com/watch?v=QEb8EZFOtf8",
+    "https://www.youtube.com/embed/QEb8EZFOtf8",
     false,
   ),
   Donghua(
@@ -120,7 +119,7 @@ final List<Donghua> donghuaList = [
     "assets/images/shrouding_heavens.jpg",
     "Ye Fan dan teman-temannya terseret ke dunia misterius setelah menemukan peti kuno. Dari sana, ia menapaki jalan kultivasi yang penuh misteri, tragedi, dan kebangkitan.",
     ["Action, Adventure, Fantasy"],
-    "https://www.youtube.com/watch?v=NuE_a7WovWs",
+    "https://www.youtube.com/embed/NuE_a7WovWs",
     true,
   ),
   Donghua(
@@ -130,7 +129,7 @@ final List<Donghua> donghuaList = [
     "assets/images/renegade_immortal.webp",
     "Wang Lin, seorang pemuda biasa, secara tak terduga mendapatkan peluang besar dalam kultivasi. Dengan kecerdikan, ketekunan, dan pengorbanan, ia menjadi legenda abadi yang ditakuti para dewa.",
     ["Action, Adventure, Fantasy"],
-    "https://www.youtube.com/watch?v=-rWxzgoBRfM",
+    "https://www.youtube.com/embed/-rWxzgoBRfM",
     true,
   ),
   Donghua(
@@ -174,7 +173,7 @@ final List<Donghua> donghuaList = [
     "assets/images/tales_hearding.webp",
     "Qin Mu, seorang pemuda misterius, tumbuh bersama para dewa yang terbuang. Dengan warisan unik, ia menantang kekuatan besar untuk mengungkap rahasia dunia dan dirinya.",
     ["Action, Adventure, Fantasy"],
-    "youtube.com/embed/WcoJs_z5gS0&vl=id",
+    "https://www.youtube.com/embed/Mj7_JDooIwE",
     true,
   ),
   Donghua(
@@ -214,7 +213,7 @@ final List<Donghua> donghuaList = [
   //   "assets/images/lord_mysteries.jpeg",
   //   "Klein Moretti, seorang detektif muda, terjerat dalam dunia penuh kabala, ramalan, dan misteri supranatural. Dengan kecerdikan, ia mencoba mengendalikan takdir di dunia gelap nan berbahaya.",
   //   "Klein Moretti",
-  // ),  
+  // ),
   // RomanceDonghua(
   //   "Fox Spirit Matchmaker",
   //   "Haoliners",

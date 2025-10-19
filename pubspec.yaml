@@ -95,6 +95,9 @@ flutter:
       - assets/images/one_piece.jpg
       - assets/images/attack_on_titan.jpg
       - assets/images/splashscreen.png
+      - assets/images/yuru_camp.jpg
+      - assets/images/spy_family.jpg
+      - assets/images/frieren.jpg
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpegfl

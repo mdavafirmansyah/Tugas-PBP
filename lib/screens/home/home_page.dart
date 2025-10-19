@@ -208,6 +208,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ? [
                 IconButton(
                   icon: const Icon(Icons.close),
+                  color: Colors.white,
                   onPressed: () {
                     setState(() {
                       _isSearching = false;
@@ -219,6 +220,7 @@ class _MyHomePageState extends State<MyHomePage> {
             : [
                 IconButton(
                   icon: const Icon(Icons.search),
+                  color: Colors.white,
                   onPressed: () {
                     setState(() {
                       _isSearching = true;
@@ -227,6 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 IconButton(
                   icon: const Icon(Icons.info_outline),
+                  color: Colors.white,
                   onPressed: () => _showDeviceInfoDialog(context),
                 ),
               ],
@@ -294,6 +297,50 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                           );
                         },
+                      ),
+
+                      // ⬅️ Tombol kiri
+                      Positioned(
+                        left: 8,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.arrow_back_ios,
+                            color: Colors.white70,
+                            size: 28,
+                          ),
+                          onPressed: () {
+                            int prevPage = _currentPage - 1;
+                            if (prevPage >= 0) {
+                              _pageController.animateToPage(
+                                prevPage,
+                                duration: const Duration(milliseconds: 400),
+                                curve: Curves.easeInOut,
+                              );
+                            }
+                          },
+                        ),
+                      ),
+
+                      // ➡️ Tombol kanan
+                      Positioned(
+                        right: 8,
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.white70,
+                            size: 28,
+                          ),
+                          onPressed: () {
+                            int nextPage = _currentPage + 1;
+                            if (nextPage < top5Random.length) {
+                              _pageController.animateToPage(
+                                nextPage,
+                                duration: const Duration(milliseconds: 400),
+                                curve: Curves.easeInOut,
+                              );
+                            }
+                          },
+                        ),
                       ),
 
                       // 🔘 Indikator dots

@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
       return;
     }
 
-    if (email == 'Nico@mail.com' && password == '12345') {
+    if (email == 'nico@gmail.com' && password == '12345') {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', true);
       await prefs.setString('userEmail', email);
