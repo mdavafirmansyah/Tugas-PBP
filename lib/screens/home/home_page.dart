@@ -3,13 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:login/models/animasi_series.dart';
 import 'package:login/models/anime.dart';
 import 'package:login/models/donghua.dart';
+import 'package:login/screens/detail_page.dart';
 import 'package:login/screens/home/componen/category_filter_chips.dart';
 import 'package:login/screens/home/componen/gridview.dart';
+import 'package:login/screens/login_screen.dart';
 import 'package:login/webview_page.dart';
 import 'package:login/data/donghua_data.dart';
 import 'package:login/data/anime_data.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Enum untuk mengatur jenis filter
 enum FilterType { semua, anime, donghua }
@@ -76,20 +79,28 @@ class _MyHomePageState extends State<MyHomePage> {
     String deviceName = 'Unknown';
     String deviceVersion = 'Unknown';
 
-    try {
-      if (Platform.isAndroid) {
-        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        deviceName = androidInfo.model;
-        deviceVersion = "Android ${androidInfo.version.release}";
-      } else if (Platform.isIOS) {
-        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-        deviceName = iosInfo.utsname.machine!;
-        deviceVersion = "iOS ${iosInfo.systemVersion}";
-      }
-    } catch (e) {
-      deviceName = "Gagal mendapatkan info";
-      deviceVersion = e.toString();
+  try {
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      deviceName = androidInfo.model;
+      deviceVersion = "Android ${androidInfo.version.release}";
+    } else if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      deviceName = iosInfo.utsname.machine;
+      deviceVersion = "iOS ${iosInfo.systemVersion}";
+    } else if (Platform.isWindows) {
+      WindowsDeviceInfo windowsInfo = await deviceInfo.windowsInfo;
+      deviceName = windowsInfo.computerName;
+      deviceVersion = "Windows ${windowsInfo.majorVersion}.${windowsInfo.minorVersion}";
+    } else if (Platform.isMacOS) {
+      MacOsDeviceInfo macInfo = await deviceInfo.macOsInfo;
+      deviceName = macInfo.computerName;
+      deviceVersion = "macOS ${macInfo.osRelease}";
     }
+  } catch (e) {
+    deviceName = "Gagal mendapatkan info";
+    deviceVersion = e.toString();
+  }
 
     showDialog(
       context: context,
@@ -181,6 +192,12 @@ class _MyHomePageState extends State<MyHomePage> {
           .toList();
     }
 
+    Future<void> _logout(BuildContext context) async {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    }
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -232,6 +249,52 @@ class _MyHomePageState extends State<MyHomePage> {
                   color: Colors.white,
                   onPressed: () => _showDeviceInfoDialog(context),
                 ),
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  color: Colors.white,
+                  onPressed: () async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        title: const Text('Konfirmasi Logout'),
+                        content: const Text('Apakah kamu yakin ingin keluar?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text('Batal'),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.redAccent,
+                              foregroundColor: Colors.white,
+                            ),
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text('Logout'),
+                          ),
+                        ],
+                      ),
+                    );
+                    if (confirm == true) {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.clear(); // 🆕 hapus status login
+
+                      // 🆕 Snackbar notifikasi opsional
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Logout berhasil')),
+                      );
+
+                      // 🆕 Kembali ke halaman login
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => const LoginPage()),
+                        (route) => false,
+                      );
+                    }
+                  },
+                ),
               ],
       ),
 
@@ -263,7 +326,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       const Text(
-                        "Rekomendasi Populer",
+                        "Mungkin Kamu Suka",
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
@@ -285,7 +348,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         itemCount: top5Random.length,
                         itemBuilder: (context, index) {
                           final item = top5Random[index];
-                          return Hero(
+                          return GestureDetector(
+      onTap: () {
+        // Navigasi ke halaman detail saat gambar carousel diklik
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailPage(item: item),
+          ),
+        );
+      },
+                          child:  Hero(
                             tag: 'popular-${item.title}',
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
@@ -295,6 +368,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 width: double.infinity,
                               ),
                             ),
+                          ),
                           );
                         },
                       ),
